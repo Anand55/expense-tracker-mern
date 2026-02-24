@@ -1,14 +1,18 @@
 import mongoose from 'mongoose';
-import { env } from './env';
 import { logger } from '../utils/logger';
 
 export async function connectDB(): Promise<void> {
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    logger.error('MONGO_URI is required');
+    process.exit(1);
+  }
   try {
-    await mongoose.connect(env.mongoUri);
+    await mongoose.connect(uri);
     logger.info('MongoDB Connected');
   } catch (err) {
     logger.error('MongoDB connection error', err);
-    throw err;
+    process.exit(1);
   }
 }
 

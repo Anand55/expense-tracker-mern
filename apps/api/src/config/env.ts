@@ -10,12 +10,18 @@ function requireEnv(name: string): string {
   return value;
 }
 
+function parseCorsOrigin(): string | string[] {
+  const raw = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+  const list = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  return list.length === 1 ? list[0] : list;
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
-  port: parseInt(process.env.PORT ?? '5000', 10),
+  port: parseInt(process.env.PORT ?? '5001', 10),
   mongoUri: process.env.MONGO_URI ?? '',
   jwtSecret: process.env.JWT_SECRET ?? '',
-  corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  corsOrigin: parseCorsOrigin(),
 };
 
 export function assertEnv(): void {

@@ -1,15 +1,17 @@
 import 'dotenv/config';
-import { assertEnv, env } from './config/env';
+import { assertEnv } from './config/env';
 import { connectDB } from './config/db';
 import app from './app';
 import { logger } from './utils/logger';
+
+const port = Number(process.env.PORT) || 5001;
 
 async function main(): Promise<void> {
   assertEnv();
   await connectDB();
 
-  app.listen(env.port, () => {
-    logger.info(`Server listening on port ${env.port}`);
+  app.listen(port, () => {
+    logger.info(`Server listening on port ${port}`);
   });
 }
 
