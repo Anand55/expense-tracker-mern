@@ -1,0 +1,57 @@
+# Run the full stack in containers (MongoDB + API + Web).
+# From repo root:  docker-compose up --build
+# Then open:        http://localhost:5173
+# API is on 5001 to avoid conflict with macOS AirPlay (port 5000).
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: expense-mongo
+    restart: unless-stopped
+    command: ["mongod", "--quiet"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    image: expense-api
+    container_name: expense-api
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/expense-tracker
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      CORS_ORIGIN: http://localhost:5173
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5001/api
+    image: expense-web
+    container_name: expense-web
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
