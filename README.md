@@ -1,128 +1,137 @@
 # Expense Tracker (MERN)
 
-A production-structured MERN monorepo for a **Personal Expense Tracking App** with TypeScript, MongoDB, Express, React, and a clean modular backend.
+Monorepo for a **Personal Expense Tracking App**: backend in `apps/api` (Express + TypeScript + MongoDB Atlas), frontend in `apps/web` (Vite + React + TypeScript).
 
-## Overview
+---
 
-- **Backend (apps/api):** Express + TypeScript, MongoDB/Mongoose, JWT auth, Zod validation, modular routes (auth, categories, expenses, summary).
-- **Frontend (apps/web):** React + Vite + TypeScript, Tailwind CSS, React Router, TanStack Query, Recharts for dashboard.
+## Live URLs
 
-Features: user registration/login, categories CRUD, expenses CRUD with month/category filters, monthly summary with category breakdown and recent expenses.
+| App | URL |
+|-----|-----|
+| **Frontend (Vercel)** | https://expense-tracker-mern-web.vercel.app |
+| **Backend (Render)** | https://expense-tracker-api-grka.onrender.com |
+| **Backend Health** | https://expense-tracker-api-grka.onrender.com/api/health |
 
-## Tech stack
+---
 
-| Layer    | Stack |
-|----------|--------|
-| Backend  | Node.js, Express, TypeScript, MongoDB, Mongoose, JWT, bcrypt, Zod, morgan |
-| Frontend | React 18, Vite, TypeScript, Tailwind CSS, React Router, TanStack React Query, Recharts |
+## Architecture
 
-## Setup (without Docker)
+```
+Browser (Vercel) → API (Render) → MongoDB Atlas
+```
 
-### Prerequisites
+- **Frontend** (Vercel): Serves the React app; calls the backend API.
+- **Backend** (Render): Express API; auth, categories, expenses, summary.
+- **Database**: MongoDB Atlas (hosted).
 
-- Node.js 18+
-- MongoDB (local or Atlas connection string)
+---
 
-### Steps
+## Environment Variables
 
-1. **Clone and install**
+### Backend (Render)
 
+| Variable | Description |
+|----------|-------------|
+| `MONGO_URI` | MongoDB Atlas connection string (from Atlas: Cluster → Connect → Drivers; do not paste real value in README). Format: `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority` |
+| `JWT_SECRET` | Secret used to sign JWTs (e.g. a long random string). |
+| `CORS_ORIGIN` | Allowed origins, comma-separated. Example: `http://localhost:5173,https://expense-tracker-mern-web.vercel.app` |
+
+### Frontend (Vercel)
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend API base URL. Production: `https://expense-tracker-api-grka.onrender.com/api` |
+
+---
+
+## Deployment Steps
+
+### Backend (Render)
+
+1. Create a **Web Service** and connect this repo.
+2. **Root Directory:** `apps/api`
+3. **Build Command:** `npm install && npm run build`
+4. **Start Command:** `npm run start`
+5. Set environment variables: `MONGO_URI`, `JWT_SECRET`, `CORS_ORIGIN` (see above). Render sets `PORT` automatically.
+6. Deploy. Verify: open **Backend Health** URL; expect `{ "status": "ok", "db": "connected" }`.
+
+### Frontend (Vercel)
+
+1. Create a **Vercel Project** and connect this repo.
+2. **Root Directory:** `apps/web`
+3. **Framework Preset:** Vite
+4. **Build Command:** `npm run build`
+5. **Output Directory:** `dist`
+6. Set **Environment Variable:** `VITE_API_URL` = `https://expense-tracker-api-grka.onrender.com/api`
+7. Deploy.
+
+---
+
+## Local Development
+
+**Prerequisites:** Node.js 18+, MongoDB (local or Atlas).
+
+1. **Install (from repo root):**
    ```bash
-   cd expense-tracker-mern
    npm install
    ```
 
-2. **Environment**
+2. **Environment (copy examples and fill in):**
+   - Backend: `cp apps/api/.env.example apps/api/.env`  
+     Set `MONGO_URI`, `JWT_SECRET`; optional `PORT`, `CORS_ORIGIN`.
+   - Frontend: `cp apps/web/.env.example apps/web/.env`  
+     Set `VITE_API_URL=http://localhost:5001/api` (or your local API port).
 
-   - Root (optional for local dev): copy `.env.example` to `.env` and set `MONGO_URI`, `JWT_SECRET` if you use them from root.
-   - API: `cp apps/api/.env.example apps/api/.env`  
-     Set `MONGO_URI`, `JWT_SECRET`. Optionally `PORT=5000`, `CORS_ORIGIN=http://localhost:5173`.
-   - Web: `cp apps/web/.env.example apps/web/.env`  
-     Set `VITE_API_URL=http://localhost:5000/api`.
-
-3. **Run**
-
+3. **Run both API and web:**
    ```bash
    npm run dev
    ```
+   - API: http://localhost:5001 (or `PORT` from `.env`)
+   - Web: http://localhost:5173
 
-   This starts both the API and the web app (API on port 5000, web on 5173).
-
-4. **Open**
-
-   - Frontend: http://localhost:5173  
-   - Register a user; default categories (Food, Travel, Shopping, Bills) are created automatically.
-
-### Run API or Web only
-
-```bash
-npm run dev --workspace=apps/api   # API only on port 5000
-npm run dev --workspace=apps/web   # Web only on port 5173
-```
-
-## Run everything in Docker (recommended)
-
-No need to install Node or MongoDB locally. Everything runs in containers.
-
-1. **Optional:** set a JWT secret in a `.env` file at the repo root:
-
-   ```env
-   JWT_SECRET=your-secret-key
-   ```
-
-   If you skip this, the default `change-me-in-production` is used (fine for local use).
-
-2. **Build and start all services** (MongoDB + API + Web):
-
+4. **Run one app only:**
    ```bash
-   docker-compose up --build
+   npm run dev --workspace=apps/api
+   npm run dev --workspace=apps/web
    ```
 
-3. **Open the app:** http://localhost:5173  
+---
 
-   - Register a user; default categories are created automatically.  
-   - API is at http://localhost:5001 (e.g. http://localhost:5001/api/health). Port 5001 is used to avoid conflict with macOS AirPlay (5000).  
-   - MongoDB is internal (port 27017 exposed only if you need to connect from the host).
+## Troubleshooting
 
-**Useful commands:**
+- **Render free tier:** The service may sleep after inactivity. The first request after sleep can take 30–60 seconds; subsequent requests are fast.
+- **CORS errors:** Ensure `CORS_ORIGIN` on Render includes your frontend origin (e.g. `https://expense-tracker-mern-web.vercel.app`). Use comma-separated values for multiple origins.
+- **MongoDB connection fails:** In Atlas, check **Network Access** (allow your IP or `0.0.0.0/0` for Render) and **Database Access** (user has read/write). If the password has special characters, use URL encoding in `MONGO_URI`.
 
-```bash
-docker-compose up -d          # Run in background
-docker-compose down           # Stop and remove containers
-docker-compose down -v        # Also remove MongoDB data volume
-```
+---
 
-## How to run tests
+## Tech Stack
 
-No tests are included in this repo. To add them later:
+| Layer | Stack |
+|-------|--------|
+| Backend | Node.js, Express, TypeScript, MongoDB Atlas, Mongoose, JWT, bcrypt, Zod, morgan |
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS, React Router, TanStack Query, Recharts |
 
-- **API:** e.g. Jest or Vitest for unit/integration tests; supertest for routes.
-- **Web:** e.g. Vitest + React Testing Library.
+---
 
-Placeholder commands you could add:
+## API Summary
 
-- Root: `npm run test` → run tests in all workspaces.
-- API: `npm run test` in `apps/api`.
-- Web: `npm run test` in `apps/web`.
-
-## API summary
-
-Base URL: `/api`
+Base path: `/api`. See [docs/API.md](docs/API.md) for details.
 
 - **Auth:** `POST /auth/register`, `POST /auth/login`, `GET /auth/me` (Bearer).
 - **Categories:** `GET/POST /categories`, `PUT/DELETE /categories/:id` (Bearer).
 - **Expenses:** `GET/POST /expenses`, `PUT/DELETE /expenses/:id` (Bearer); GET supports `?month=YYYY-MM&page=&limit=&categoryId=`.
 - **Summary:** `GET /summary?month=YYYY-MM` (Bearer).
 
-Full request/response examples: [docs/API.md](docs/API.md).
+---
 
-## Repo structure
+## Repo Structure
 
 ```
 expense-tracker-mern/
   apps/
-    api/          # Express API
-    web/          # React Vite app
+    api/          # Express API (deploy to Render)
+    web/          # React Vite app (deploy to Vercel)
   docs/
     API.md
     AI_USAGE.md
@@ -130,4 +139,14 @@ expense-tracker-mern/
   docker-compose.yml
 ```
 
-See the spec in your project brief for the full folder layout.
+---
+
+## Docker (optional)
+
+From repo root:
+
+```bash
+docker-compose up --build
+```
+
+App: http://localhost:5173. API: http://localhost:5001. See `docker-compose.yml` for ports and env.
