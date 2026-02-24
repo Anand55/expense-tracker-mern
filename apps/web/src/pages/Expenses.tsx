@@ -101,46 +101,65 @@ export function Expenses() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-gray-800">Expenses</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Expenses</h1>
+          <p className="mt-1 text-sm text-gray-600">Manage and track all your expenses</p>
+        </div>
         <button
           type="button"
           onClick={() => { setEditing(null); setModalOpen(true); }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="btn btn-primary inline-flex items-center gap-2"
         >
-          Add expense
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add Expense
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-4 items-center">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
-          <select
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
-          >
-            {monthOptions().map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 min-w-[140px]"
-          >
-            <option value="">All</option>
-            {categories.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+      <div className="card">
+        <div className="card-body">
+          <div className="flex flex-wrap gap-4 items-end">
+            <div className="flex-1 min-w-[200px]">
+              <label className="label">Month</label>
+              <select
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="input"
+              >
+                {monthOptions().map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="label">Category</label>
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="input"
+              >
+                <option value="">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(month !== getCurrentMonth() || categoryId) && (
+              <button
+                type="button"
+                onClick={() => { setMonth(getCurrentMonth()); setCategoryId(''); }}
+                className="btn btn-secondary text-sm"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

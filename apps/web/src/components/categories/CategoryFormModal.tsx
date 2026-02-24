@@ -33,18 +33,29 @@ export function CategoryFormModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-6"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          {edit ? 'Rename category' : 'Add category'}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {edit ? 'Rename Category' : 'New Category'}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+            <label htmlFor="name" className="label">
+              Category Name
             </label>
             <input
               id="name"
@@ -52,22 +63,24 @@ export function CategoryFormModal({
               type="text"
               required
               defaultValue={edit?.name}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g., Food, Travel, Shopping"
+              className="input"
+              autoFocus
             />
           </div>
-          <div className="flex gap-2 justify-end pt-2">
+          <div className="flex gap-3 justify-end pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+              className="btn btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="btn btn-primary"
             >
-              {edit ? 'Update' : 'Add'}
+              {edit ? 'Update' : 'Create'}
             </button>
           </div>
         </form>

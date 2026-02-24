@@ -44,45 +44,60 @@ export function ExpenseFormModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          {edit ? 'Edit expense' : 'Add expense'}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-              Amount
-            </label>
-            <input
-              id="amount"
-              name="amount"
-              type="number"
-              step="0.01"
-              min="0.01"
-              required
-              defaultValue={edit?.amount}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {edit ? 'Edit Expense' : 'New Expense'}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="amount" className="label">
+                Amount (₹)
+              </label>
+              <input
+                id="amount"
+                name="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                defaultValue={edit?.amount}
+                placeholder="0.00"
+                className="input"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label htmlFor="date" className="label">
+                Date
+              </label>
+              <input
+                id="date"
+                name="date"
+                type="date"
+                required
+                defaultValue={defaultDate}
+                className="input"
+              />
+            </div>
           </div>
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-              Date
-            </label>
-            <input
-              id="date"
-              name="date"
-              type="date"
-              required
-              defaultValue={defaultDate}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="categoryId" className="label">
               Category
             </label>
             <select
@@ -90,9 +105,9 @@ export function ExpenseFormModal({
               name="categoryId"
               required
               defaultValue={edit ? (typeof edit.categoryId === 'object' ? edit.categoryId._id : edit.categoryId) : ''}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="input"
             >
-              <option value="">Select category</option>
+              <option value="">Select a category</option>
               {categories.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -101,30 +116,31 @@ export function ExpenseFormModal({
             </select>
           </div>
           <div>
-            <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-1">
-              Note (optional)
+            <label htmlFor="note" className="label">
+              Note (Optional)
             </label>
-            <input
+            <textarea
               id="note"
               name="note"
-              type="text"
+              rows={3}
               defaultValue={edit?.note}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              placeholder="Add a description or note..."
+              className="input resize-none"
             />
           </div>
-          <div className="flex gap-2 justify-end pt-2">
+          <div className="flex gap-3 justify-end pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+              className="btn btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="btn btn-primary"
             >
-              {edit ? 'Update' : 'Add'}
+              {edit ? 'Update' : 'Create'}
             </button>
           </div>
         </form>
