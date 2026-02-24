@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import mongoose from 'mongoose';
 import { env } from './config/env';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './modules/auth/auth.routes';
@@ -22,7 +23,8 @@ app.use('/api/expenses', expensesRoutes);
 app.use('/api/summary', summaryRoutes);
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok' });
+  const db = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ status: 'ok', db });
 });
 
 app.use(errorHandler);

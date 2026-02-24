@@ -17,6 +17,4 @@ const userSchema = new Schema<IUser>(
   { timestamps: false }
 );
 
-userSchema.index({ email: 1 });
-
 export const User = mongoose.model<IUser>('User', userSchema) as unknown as mongoose.Model<UserDoc>;

@@ -1,12 +1,12 @@
-import { assertEnv } from './config/env';
-import { connectDb } from './config/db';
+import 'dotenv/config';
+import { assertEnv, env } from './config/env';
+import { connectDB } from './config/db';
 import app from './app';
-import { env } from './config/env';
 import { logger } from './utils/logger';
 
 async function main(): Promise<void> {
   assertEnv();
-  await connectDb();
+  await connectDB();
 
   app.listen(env.port, () => {
     logger.info(`Server listening on port ${env.port}`);
