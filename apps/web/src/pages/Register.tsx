@@ -28,10 +28,10 @@ export function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
+      <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6 overflow-visible">
         <h1 className="text-xl font-semibold text-center text-gray-800 mb-4">Register</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 min-h-0">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>
           )}
@@ -68,12 +68,15 @@ export function Register() {
             </label>
             <input
               id="confirmPassword"
+              name="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter your password"
               required
               minLength={6}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              autoComplete="new-password"
             />
           </div>
           <button
