@@ -6,6 +6,7 @@ import type { ApiError } from '../api/client';
 export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -13,6 +14,10 @@ export function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     try {
       await register(email, password);
       navigate('/dashboard', { replace: true });
@@ -75,6 +80,23 @@ export function Register() {
                   className="input"
                 />
                 <p className="mt-1.5 text-xs text-gray-500">Must be at least 6 characters long</p>
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="label">
+                  Confirm password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Re-enter your password"
+                  className="input"
+                  autoComplete="new-password"
+                />
               </div>
               <button
                 type="submit"
